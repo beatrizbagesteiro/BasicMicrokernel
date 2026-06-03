@@ -136,7 +136,7 @@ void kfree(void *ptr){
     block_t *bloco = (block_t *)((uint8_t *)ptr - BLOCK_HEADER_SIZE);
     bloco->free = 1;
  
-    coalescencia(); // Junta blocos vizinhos livres
+    coalesce(); // Junta blocos vizinhos livres
 }
 
 
