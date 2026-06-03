@@ -1,0 +1,10 @@
+{
+    "files.exclude": {
+        "**/*.o": true,
+        "**/*.obj": true,
+        "**/*.a": true,
+        "**/*.so": true,
+        "**/*.exe": true,
+        "build": true
+    }
+}
