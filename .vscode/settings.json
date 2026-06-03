@@ -5,6 +5,7 @@
         "**/*.a": true,
         "**/*.so": true,
         "**/*.exe": true,
+        "**/*.elf": true,
         "build": true
     }
 }

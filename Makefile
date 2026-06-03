@@ -25,12 +25,20 @@ all:
 
 	$(CROSS)ld -T linker.ld $(OBJS) -o kernel.elf
 
-run: all
+run-make: all
 	qemu-system-riscv64 \
 		-machine virt \
 		-nographic \
 		-bios default \
 		-kernel kernel.elf
-
+		# \ 2>&1 | tee qemu.log
+		# Isso é para salvar o log externamente. Remova os '#' no Makefile para funcionar (Isso salvará um qemu.log na pasta principal)
 clean:
 	rm -f *.o kernel.elf
+
+run:
+	qemu-system-riscv64 \
+		-machine virt \
+		-nographic \
+		-bios default \
+		-kernel kernel.elf
