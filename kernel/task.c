@@ -1,6 +1,7 @@
 #include "task.h"
 #include "memory.h"
 #include <stdint.h>
+#include <stddef.h>
 
 TCB tasks[MAX_TASKS];
 int task_count = 0;
@@ -30,4 +31,20 @@ void xTaskCreate(void (*task)(void),
     t->priority = priority;
 
     task_count++;
+}
+
+void vTaskDelete(void (*task)(void)){
+    for (int i = 0; i < task_count; i++) {
+        if (tasks[i].entry == task) { // Encontrou a task passada
+
+            kfree(tasks[i].stack); // Libera a stack no heap
+            tasks[i].stack = NULL;
+
+            // Move a última task para o lugar da deletada (evita buraco no vetor)
+            tasks[i] = tasks[task_count - 1];
+
+            task_count--;
+            return;
+        }
+    }
 }
