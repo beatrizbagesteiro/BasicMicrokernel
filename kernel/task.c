@@ -32,7 +32,7 @@ void xTaskCreate(void (*task)(void),
 
     task_count++;
 }
-
+/*
 void vTaskDelete(void (*task)(void)){
     for (int i = 0; i < task_count; i++) {
         if (tasks[i].entry == task) { // Encontrou a task passada
@@ -48,3 +48,4 @@ void vTaskDelete(void (*task)(void)){
         }
     }
 }
+*/
