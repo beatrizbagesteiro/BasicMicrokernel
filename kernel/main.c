@@ -1,8 +1,10 @@
 #include "task.h"
 #include "scheduler.h"
 #include "memory.h"
+#include "testes.h"
+#include "uart.h" // Não estava incluso
 
-extern void uart_print(const char*);
+// extern void uart_print(const char*);
 
 /*   Tasks   */
 
@@ -48,12 +50,16 @@ void kernel_main()
 {
     memory_init();   // OBRIGATÓRIO
 
+    testes_memoria();
+
+    while (1);
+    /*
     uart_print("\n=== Kernel ===\n");
 
     xTaskCreate(task1, 2048, 1);
     xTaskCreate(task2, 2048, 1);
 
     scheduler_start();
+    */
 
-    while (1);
 }

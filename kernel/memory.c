@@ -1,11 +1,9 @@
 #include "memory.h"
+#include "uart.h"
 #include <stddef.h>
 
-#define HEAP_START 0x80400000UL
-#define HEAP_SIZE (8 * 1024 * 1024) // 8 MB
+#define HEAP_SIZE 0x10000
 #define ALIGN 8 // Alinhamento de 8 bytes
-
-static uint8_t heap_area[HEAP_SIZE];
 
 // Modelo do bloco
 typedef struct block{
@@ -14,23 +12,20 @@ typedef struct block{
     struct block *next; // Próximo bloco na lista
 } block_t;
 
+static uint8_t heap[HEAP_SIZE];
+static block_t *free_list = NULL;
+
 #define BLOCK_HEADER_SIZE (sizeof(block_t)) // Tamanho da própria struct
 
-static uint8_t *heap_base = (uint8_t *)HEAP_START;
-static uint8_t *heap_end = (uint8_t *)(HEAP_START + HEAP_SIZE);
-static block_t *heap_start = NULL; // início da lista de blocos
-
-
-void memory_init(void) { // Cria o bloco inicial que reserva todo o heap
-    heap_start = (block_t *)heap_area;
-    heap_start->size = HEAP_SIZE - BLOCK_HEADER_SIZE;
-    heap_start->free = 1;
-    heap_start->next = NULL;
+void memory_init(void){
+    free_list = (block_t*) heap;
+    free_list->size = HEAP_SIZE - sizeof(block_t);
+    free_list->free = 1;
+    free_list->next = 0;
 }
 
-
 static block_t *pesquisar (uint64_t r_size){ // Será usado para pesquisar por um bloco livre
-    block_t *aux = heap_start;
+    block_t *aux = free_list;
     while(aux != NULL){
         if(aux->free == 1 && aux->size >= r_size){ // Aloca no primeiro que encontrar e se estiver dentro do tamanho alocado
             return aux;
@@ -110,7 +105,7 @@ void *kmalloc(uint64_t size){
 // Como resultado [Bloco B: 474B | livre] -> [Bloco C: 200B | ocupado], e agora poderia alocar os anteriores 400B
 // B é absorvido pelo A, chamado a cada kfree()
 static void coalesce(void){
-    block_t *atual = heap_start;
+    block_t *atual = free_list;
     while (atual != NULL && atual->next != NULL){
         // Se o atual e o seu vizinho (next) estiverem livre (free = 1), eu uno os dois
         if (atual->free == 1 && atual->next->free == 1){
@@ -148,7 +143,7 @@ uint64_t memory_total(void){
 
 uint64_t memory_used(void){
     uint64_t used = 0;
-    block_t *aux = heap_start;
+    block_t *aux = free_list;
     while (aux != NULL){
         if (aux->free == 0)
             used += BLOCK_HEADER_SIZE + aux->size;
@@ -157,10 +152,9 @@ uint64_t memory_used(void){
     return used;
 }
 
-
 uint64_t memory_free(void){
     uint64_t free = 0;
-    block_t *aux = heap_start;
+    block_t *aux = free_list;
     while (aux != NULL){
         if (aux->free == 1)
             free += aux->size;
