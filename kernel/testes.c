@@ -3,8 +3,7 @@
 #include "uart.h"
 #include "task.h"
 
-static void heap_estatisticas(){
-    uart_print("---------------\n");
+void heap_estatisticas(){
     uart_print("Heap Total: ");
     uart_print_uint(memory_total());
     uart_print("\n");
@@ -16,40 +15,61 @@ static void heap_estatisticas(){
     uart_print("Heap Livre: ");
     uart_print_uint(memory_free());
     uart_print("\n");
-    uart_print("---------------\n");
 }
 
 void testes_memoria(){
-    heap_estatisticas();
+    uart_print("========================================\n");
+    mapa_heap();
 
-    uart_print("Alocando blocos...\n");
-    uart_print("Total de: 3576 bytes\n");
+    uart_print("\n----------------------------------------\n");
+    uart_print("[TESTE 1] ALOCANDO BLOCOS INICIAIS\n");
+    uart_print("-> Pedido: ptr1(1000), ptr2(500), ptr3(2000)\n");
+    uart_print("----------------------------------------\n");
     void *ptr1 = kmalloc(1000);
     void *ptr2 = kmalloc(500);
     void *ptr3 = kmalloc(2000);
+    
+    mapa_heap();
 
-    heap_estatisticas();
-
-    uart_print("Liberando memória...\n");
-    uart_print("Total de: 2024 bytes\n");
-    kfree(ptr3);
-
-    heap_estatisticas();
-
-    uart_print("Reutilizando bloco...\n");
-    uart_print("Alocando: 1024 bytes\n");
-    void *ptr4 = kmalloc(1000);
-
-    heap_estatisticas();
-
-    uart_print("Teste de coalescencia...\n");
-    uart_print("Precisa implementar *mapa da heap* para visualizar esse teste\n");
-    kfree(ptr1);
-    kfree(ptr4);
-
-    uart_print("Liberando memória restante...\n");
-    uart_print("Total de: 528 bytes\n");
+    uart_print("\n----------------------------------------\n");
+    uart_print("[TESTE 2] CRIANDO O BURACO\n");
+    uart_print("-> Acao: Liberando ptr2 (504 bytes livres)\n");
+    uart_print("----------------------------------------\n");
     kfree(ptr2);
+    
+    mapa_heap();
 
-    heap_estatisticas();
+    uart_print("\n----------------------------------------\n");
+    uart_print("[TESTE 3] IGNORAR BURACO CRIADO\n");
+    uart_print("-> Acao: Alocando ptr4 (1000 bytes)\n");
+    uart_print("----------------------------------------\n");
+    void *ptr4 = kmalloc(1000);
+    
+    mapa_heap();
+
+    uart_print("\n----------------------------------------\n");
+    uart_print("[TESTE 4] REUTILIZACAO DO BLOCO\n");
+    uart_print("-> Acao: Alocando ptr5 (500 bytes)\n");
+    uart_print("----------------------------------------\n");
+    void *ptr5 = kmalloc(500);
+    
+    mapa_heap();
+
+    uart_print("\n----------------------------------------\n");
+    uart_print("[TESTE 5] COALESCENCIA\n");
+    uart_print("-> Acao: Liberando ponteiros 1 e 5\n");
+    uart_print("----------------------------------------\n");
+    kfree(ptr1);
+    kfree(ptr5); 
+    mapa_heap();
+
+    uart_print("\n----------------------------------------\n");
+    uart_print("[TESTE 6] COALESCENCIA FINAL\n");
+    uart_print("-> Acao: Liberando ponteiros 1 e 5\n");
+    uart_print("----------------------------------------\n");
+    kfree(ptr3);
+    kfree(ptr4);
+    mapa_heap();
+    
+    uart_print("========================================\n\n");
 }

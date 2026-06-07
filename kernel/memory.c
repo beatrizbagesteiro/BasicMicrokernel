@@ -162,3 +162,30 @@ uint64_t memory_free(void){
     }
     return free;
 }
+
+void mapa_heap(void){
+    // Pega o primerio endereço da heap
+    block_t *bloco_atual = (block_t *)heap;
+    // Para descobrir o endereço final, primeiro se converte o endereço para int e depois faz o calculo
+    uint64_t endereco_final = (uint64_t)heap + HEAP_SIZE; 
+
+    while ((uint64_t)bloco_atual < endereco_final) {
+        
+        uart_print("[");
+        uart_print_uint((uint64_t)bloco_atual); 
+        uart_print("] | Tamanho: ");
+        uart_print_uint(bloco_atual->size);
+        uart_print(" bytes | Status: ");
+        
+        if (bloco_atual->free) {
+            uart_print("LIVRE\n");
+        } else {
+            uart_print("OCUPADO\n");
+        }
+
+        uint64_t proximo_endereco = (uint64_t)bloco_atual + BLOCK_HEADER_SIZE + bloco_atual->size;
+        
+        bloco_atual = (block_t *)proximo_endereco;
+    }
+
+}
