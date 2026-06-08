@@ -21,3 +21,5 @@ qemu-system-riscv64 \
 - Limpa o build para poder ser buildado novamente;
 ``make run``
 - Roda o programa.
+
+> Ctrl + A e X (sem ctrl) para parar

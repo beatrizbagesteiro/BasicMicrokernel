@@ -31,9 +31,9 @@ run-make: all
 		-machine virt \
 		-nographic \
 		-bios default \
-		-kernel kernel.elf
-		# \ 2>&1 | tee qemu.log
-		# Isso é para salvar o log externamente. Remova os '#' no Makefile para funcionar (Isso salvará um qemu.log na pasta principal)
+		-kernel kernel.elf \
+		2>&1 | tee qemu.log
+		
 clean:
 	rm -f *.o kernel.elf
 
