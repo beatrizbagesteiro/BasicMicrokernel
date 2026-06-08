@@ -3,10 +3,19 @@
 #include "memory.h"
 #include "testes.h"
 #include "uart.h" // Não estava incluso
+#include "utils.h" // Adicionando para importar o delay
 
 // extern void uart_print(const char*);
 
-#define TESTE 1  // 1 = teste ativo / 2 = teste desativado
+// Tempos de delay
+#define DESATIVADO  0UL
+#define RAPIDO 10000000UL
+#define NORMAL 100000000UL
+#define LENTO 250000000UL
+
+#define DELAY LENTO // Definindo o DELAY global
+
+#define TESTE 0  // 1 = teste ativo / 2 = teste desativado
 
 /*   Tasks   */
 
@@ -23,6 +32,8 @@ void task1()
         uart_print("Memory free: ");
         uart_print_uint(memory_free());
         uart_print(" bytes\n\n");
+
+        delay(DELAY);
 
         yield();
     }
@@ -43,6 +54,8 @@ void task2()
         uart_print("Memory free: ");
         uart_print_uint(memory_free());
         uart_print(" bytes\n\n");
+
+        delay(DELAY);
 
         yield();
     }
@@ -66,6 +79,8 @@ void task2()
 
             impressoes++; // Aumenta o contador para nunca mais entrar aqui
         }
+
+        delay(DELAY);
 
         yield(); // A task continua viva e rodando silenciosamente
     }

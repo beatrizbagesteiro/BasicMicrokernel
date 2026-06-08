@@ -9,7 +9,7 @@ CFLAGS = -march=rv64gc -mabi=lp64 \
          -Wall -Iinclude
 
 OBJS = start.o trap_entry.o context.o \
-       main.o task.o scheduler.o uart.o string.o memory.o testes.o
+       main.o task.o scheduler.o uart.o string.o memory.o testes.o utils.o
 
 all:
 	$(CROSS)gcc $(CFLAGS) -c boot/start.S
@@ -23,6 +23,7 @@ all:
 	$(CROSS)gcc $(CFLAGS) -c kernel/string.c
 	$(CROSS)gcc $(CFLAGS) -c kernel/memory.c
 	$(CROSS)gcc $(CFLAGS) -c kernel/testes.c
+	$(CROSS)gcc $(CFLAGS) -c kernel/utils.c
 
 	$(CROSS)ld -T linker.ld $(OBJS) -o kernel.elf
 
