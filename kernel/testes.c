@@ -15,6 +15,10 @@ void heap_estatisticas(){
     uart_print("Heap Livre: ");
     uart_print_uint(memory_free());
     uart_print("\n");
+
+    uart_print("Fragmentacao: ");
+    uart_print_uint(memory_fragmentation_percent());
+    uart_print("%\n");
 }
 
 void testes_memoria(){

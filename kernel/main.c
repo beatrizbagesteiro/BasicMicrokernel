@@ -15,7 +15,8 @@
 
 #define DELAY LENTO // Definindo o DELAY global
 
-#define TESTE 0  // 1 = teste ativo / 2 = teste desativado
+#define TESTE 1  // 1 = teste ativo / 2 = teste desativado
+#define TESTE_FRAGMENTACAO 1
 
 /*   Tasks   */
 
@@ -118,6 +119,45 @@ void kernel_main()
     uart_print("\n");
     heap_estatisticas();
     uart_print("\n----------------------------------------\n");
+
+#if TESTE_FRAGMENTACAO
+    void *a = kmalloc(8192);
+    void *b = kmalloc(8192);
+    void *c = kmalloc(8192);
+    void *d = kmalloc(8192);
+    void *e = kmalloc(8192);
+    void *f = kmalloc(8192);
+
+    kfree(b);
+    kfree(d);
+    kfree(f);
+    
+    uart_print("=== TESTE DE FRAGMENTACAO ===\n");
+
+    mapa_heap();
+    uart_print("\n");
+
+    heap_estatisticas();
+
+    uart_print("============================\n");
+
+    // === TESTE DE FRAGMENTACAO ===
+    // [2149599368] | Tamanho: 2048 bytes | Status: LIVRE
+    // [2149601440] | Tamanho: 2048 bytes | Status: OCUPADO
+    // [2149603512] | Tamanho: 8192 bytes | Status: OCUPADO
+    // [2149611728] | Tamanho: 8192 bytes | Status: LIVRE
+    // [2149619944] | Tamanho: 8192 bytes | Status: OCUPADO
+    // [2149628160] | Tamanho: 8192 bytes | Status: LIVRE
+    // [2149636376] | Tamanho: 8192 bytes | Status: OCUPADO
+    // [2149644592] | Tamanho: 20288 bytes | Status: LIVRE
+
+    // Heap Total: 65536
+    // Heap Usado: 26720
+    // Heap Livre: 38720
+    // Fragmentacao: 47%
+    // Com 38720B livres e apenas 20288 no maior bloco livre contínuo indica que quase metade da memória livre está espalhada em buracos menores
+
+#endif
 
 #if !TESTE
     xTaskCreate(task1, 2048, 1);

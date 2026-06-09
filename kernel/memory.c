@@ -152,6 +152,7 @@ uint64_t memory_used(void){
     return used;
 }
 
+
 uint64_t memory_free(void){
     uint64_t free = 0;
     block_t *aux = free_list;
@@ -162,6 +163,7 @@ uint64_t memory_free(void){
     }
     return free;
 }
+
 
 void mapa_heap(void){
     // Pega o primerio endereço da heap
@@ -188,4 +190,27 @@ void mapa_heap(void){
         bloco_atual = (block_t *)proximo_endereco;
     }
 
+}
+
+
+uint64_t memory_fragmentation_percent(void){
+    uint64_t free_total = 0;
+    uint64_t largest_free = 0;
+
+    block_t *aux = free_list;
+    while (aux != NULL){
+        if (aux->free == 1){
+            free_total += aux->size;
+            if (aux->size > largest_free){
+                largest_free = aux->size;
+            }
+        }
+        aux = aux->next;
+    }
+
+    if (free_total == 0){
+        return 0;
+    }
+
+    return ((free_total - largest_free) * 100ULL) / free_total;
 }

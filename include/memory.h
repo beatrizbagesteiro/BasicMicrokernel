@@ -15,3 +15,5 @@ uint64_t memory_used(void);
 uint64_t memory_free(void);
 uint64_t memory_total(void);
 void mapa_heap(void);
+
+uint64_t memory_fragmentation_percent(void);
